@@ -18,6 +18,8 @@ public class SocketConfig {
         com.corundumstudio.socketio.Configuration config = new com.corundumstudio.socketio.Configuration();
         config.setHostname(host);
         config.setPort(port);
+        config.setContext("/socket.io");
+        config.setOrigin("*");
         return new SocketIOServer(config);
     }
 }

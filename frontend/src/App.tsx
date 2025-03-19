@@ -2,6 +2,9 @@ import { useCallback, useEffect, useState } from "react";
 import "./App.css";
 import axios from "axios";
 import io  from 'socket.io-client';
+import Stomp from '@stomp/stompjs';
+import SockJS from "sockjs-client";
+import { StompSessionProvider, useSubscription } from "react-stomp-hooks";
 
 function App() {
   interface AppointmentResponse {
@@ -22,35 +25,11 @@ function App() {
       console.log(err);
     }
   };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-
   async function takeAppointment(appointmentId: number, customerId: number) {
     const response = await axios.get("http://localhost:8080/appointments/update/" + appointmentId + "/" + customerId);
     if (response.data == true) fetchData();
 
-    const connect = io("http://172.20.160.1:8085", {
-      query: {
-        room: "erdem",
-        username: "webconnect",
-      },
-      transports: ['polling'],  // Yalnızca polling kullanarak dene
-      upgrade: false  // WebSocket'e yükseltmeyi devre dışı bırak
-    });   debugger;
-    connect.on("read_message", (data:any) => {
-      console.log("socket mesajı:")
-      console.log(data);
-    });
-    connect.emit("send_message", {
-      messageType:"Client",
-      content: "webtest",
-      room: "erdem",
-      username: "erdem"
-  });
-    connect.disconnect();
+
   }
 
   const formatDate = (dateString: string): string => {
@@ -58,9 +37,61 @@ function App() {
     const formattedDate = new Intl.DateTimeFormat("en-GB", options).format(new Date(dateString));
     return formattedDate;
   };
+  useEffect(() => {
+    fetchData();
+  //   const connect = io("http://172.27.240.1:8085", {
+  //     query: {
+  //       room: "erdem",
+  //       username: "webconnect",
+  //     },
+  //     transports: ['polling'],  // Yalnızca polling kullanarak dene
+  //     upgrade: false  // WebSocket'e yükseltmeyi devre dışı bırak
+  //   });
+  //   connect.on("read_message", (data:any) => {
+  //     console.log("socket mesajı:")
+  //     console.log(data);
+  //   });
+  //   connect.emit("send_message", {
+  //     messageType:"Client",
+  //     content: "webtest",
+  //     room: "erdem",
+  //     username: "erdem"
+  // });
+    // connect.disconnect();
+  }, []);
 
 
 
+  const [messages,setMesssages] = useState<any[]>([]);
+  const [message, setMessage] = useState<any>("");
+  const[nickname,setNickname] = useState("");
+  const [stompClient,setStompClient] = useState<any>(null);
+
+  useSubscription("http://172.27.240.1:8080/ws-endpoint/app/topic",(message)=>{
+    console.log(message);
+  });
+  useEffect(()=>{
+    // const socket = new SockJS("http:/localhost:8080/ws");
+    // const client = Stomp.over(socket);
+
+    // client.connect({},(message:any)=>{
+    //   const recievedMessage = JSON.parse(message.body);
+    //   setMesssages((prevMessage:any)=>[...prevMessage,recievedMessage]);
+    // });
+    // setStompClient(client);
+    // return ()=>{
+    //   client.disconnect();
+    // }
+  //   socket.on('read_message',(message:any)=>{
+  //     setMessage(message);
+  // })
+  // console.log(message);
+  // return ()=>{
+  //   socket.off('read_message');
+  // }
+}, []);
+
+const socket = io("ws://172.27.240.1:8085?room=erdem&username=webconnect",{})
   return (
     <>
       <div>

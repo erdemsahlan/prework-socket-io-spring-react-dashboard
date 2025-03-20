@@ -24,7 +24,7 @@
     "react-stomp": "^5.1.0",
     "react-stomp-hooks": "^3.0.1",
     "socket.io": "^4.8.1",
-    "socket.io-client": "^4.8.1",
+    "socket.io-client": "^2.5.0",
     "sockjs": "^0.3.24",
     "sockjs-client": "^1.6.1"
   },

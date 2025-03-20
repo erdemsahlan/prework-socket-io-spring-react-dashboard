@@ -2,10 +2,10 @@ package com.preworkspringsocketio.Contoller;
 
 import com.preworkspringsocketio.Services.AppointmentService;
 import com.preworkspringsocketio.model.Appointment;
+import com.preworkspringsocketio.socket.SocketService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,6 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/appointments")
 @CrossOrigin("*")
+@RequiredArgsConstructor
 public class AppointmentController {
 
     @Autowired
@@ -32,9 +33,19 @@ public class AppointmentController {
 //        socketModule.sendMessageToAll("get_message",appointment);
         return result;
     }
-    @MessageMapping("/send") // React tarafından gelen mesajları dinler
-    @SendTo("/topic/messages") // Mesajları yayınlar
-    public String handleMessage(String message) {
-        return "Sunucudan gelen mesaj: " + message;
-    }
+
+    //    @MessageMapping("/send") // React tarafından gelen mesajları dinler
+//    @SendTo("/topic/messages") // Mesajları yayınlar
+//    public String handleMessage(String message) {
+//        return "Sunucudan gelen mesaj: " + message;
+//    }
+//    private final SocketServiceTest socketService;
+//
+//    @PostMapping("/send")
+//    public String sendMessage(@RequestBody String message) {
+//        socketService.sendMessage(message);
+//        return "Message sent: " + message;
+//    }
+
+
 }

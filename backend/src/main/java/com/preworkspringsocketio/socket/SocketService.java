@@ -44,4 +44,5 @@ public class SocketService {
                 .build());
         sendSocketMessage(senderClient, storedMessage, room);
     }
+
 }

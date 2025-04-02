@@ -29,8 +29,6 @@ public class AppointmentController {
     @GetMapping("/update/{appointmentId}/{customerId}")
     public int updateAppointment(@PathVariable Long appointmentId, @PathVariable Long customerId) {
         int result = appointmentService.takeAppointment(appointmentId, customerId);
-        Appointment appointment = appointmentService.findAppointmentById(appointmentId);
-//        socketModule.sendMessageToAll("get_message",appointment);
         return result;
     }
 

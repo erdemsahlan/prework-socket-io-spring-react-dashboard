@@ -1,6 +1,7 @@
 package com.preworkspringsocketio.socket;
 
 import com.corundumstudio.socketio.SocketIOClient;
+import com.corundumstudio.socketio.SocketIOServer;
 import com.preworkspringsocketio.Services.MessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,10 +12,8 @@ import com.preworkspringsocketio.model.Message;
 @RequiredArgsConstructor
 @Slf4j
 public class SocketService {
-
-
     private final MessageService messageService;
-
+    private final SocketIOServer server;
 
     public void sendSocketMessage(SocketIOClient senderClient, Message message, String room) {
         for (
@@ -44,5 +43,15 @@ public class SocketService {
                 .build());
         sendSocketMessage(senderClient, storedMessage, room);
     }
+    public void broadcastAppointmentId(String room, String appointmentId) {
+        Message message = Message.builder()
+                .messageType("Appointment")
+                .content(appointmentId)
+                .room(room)
+                .username("System")
+                .build();
 
+        Message storedMessage = messageService.saveMessage(message);
+        server.getRoomOperations(room).sendEvent("read_message", storedMessage);
+    }
 }

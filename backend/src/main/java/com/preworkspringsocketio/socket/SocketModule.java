@@ -4,6 +4,7 @@ import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.listener.ConnectListener;
 import com.corundumstudio.socketio.listener.DataListener;
 import com.corundumstudio.socketio.listener.DisconnectListener;
+import com.preworkspringsocketio.model.Appointment;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import com.preworkspringsocketio.model.Message;
@@ -24,7 +25,7 @@ public class SocketModule {
         server.addConnectListener(onConnected());
         server.addDisconnectListener(onDisconnected());
         server.addEventListener("send_message", Message.class, onChatReceived());
-
+        server.addEventListener("send_appointment_message", Appointment.class, onNotificationReceived());
     }
 
 
@@ -32,6 +33,12 @@ public class SocketModule {
         return (senderClient, data, ackSender) -> {
             log.info(data.toString());
             socketService.saveMessage(senderClient, data);
+        };
+    }
+    private DataListener<Appointment> onNotificationReceived() {
+        return (senderClient, data, ackSender) -> {
+            log.info(data.toString());
+            socketService.saveAppointmet(senderClient, data);
         };
     }
 

@@ -37,6 +37,7 @@ public class AppointmentService {
     @Transactional
     public int takeAppointment(long appointmentId, long customerId) {
             int result = appointmentRepository.takeAppointment(appointmentId, customerId);
+            Appointment appointment = findAppointmentById(appointmentId);
             Message message = Message.builder()
                     .messageType("appointment")
                     .content(String.valueOf(appointmentId))
@@ -44,6 +45,7 @@ public class AppointmentService {
                     .username("System")
                     .build();
             socketService.broadcastAppointmentId("Ankara", String.valueOf(appointmentId));
+            socketService.broadcastAppointmetId("Ankara",appointment);
             return result;
     }
 

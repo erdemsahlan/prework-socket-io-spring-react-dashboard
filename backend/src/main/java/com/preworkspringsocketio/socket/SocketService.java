@@ -25,15 +25,6 @@ public class SocketService {
             }
         }
     }
-    public void sendAppointmentMessage(SocketIOClient senderClient, Appointment appointment, String room) {
-        for (
-                SocketIOClient client : senderClient.getNamespace().getRoomOperations(room).getClients()) {
-            if (!client.getSessionId().equals(senderClient.getSessionId())) {
-                client.sendEvent("send_appointment_message",
-                        appointment);
-            }
-        }
-    }
 
     public void saveMessage(SocketIOClient senderClient, Message message) {
         Message storedMessage = messageService.saveMessage(Message.builder()
@@ -44,9 +35,6 @@ public class SocketService {
                 .build());
         sendSocketMessage(senderClient, storedMessage, message.getRoom());
     }
-    public void saveAppointmet(SocketIOClient senderClient, Appointment appointment) {
-        sendAppointmentMessage(senderClient,appointment,"appointment");
-    }
 
     public void saveInfoMessage(SocketIOClient senderClient, String message, String room) {
         Message storedMessage = messageService.saveMessage(Message.builder()
@@ -56,6 +44,11 @@ public class SocketService {
                 .build());
         sendSocketMessage(senderClient, storedMessage, room);
     }
+
+    public void saveAppointmet(SocketIOClient senderClient, Appointment appointment) {
+        sendAppointmentMessage(senderClient, appointment, "appointment");
+    }
+
     public void broadcastAppointmentId(String room, String appointmentId) {
         Message message = Message.builder()
                 .messageType("Appointment")
@@ -63,8 +56,21 @@ public class SocketService {
                 .room(room)
                 .username("System")
                 .build();
-
         Message storedMessage = messageService.saveMessage(message);
         server.getRoomOperations(room).sendEvent("read_message", storedMessage);
+    }
+
+    public void sendAppointmentMessage(SocketIOClient senderClient, Appointment appointment, String room) {
+        for (
+                SocketIOClient client : senderClient.getNamespace().getRoomOperations(room).getClients()) {
+            if (!client.getSessionId().equals(senderClient.getSessionId())) {
+                client.sendEvent("send_appointment_message",appointment);
+            }
+        }
+    }
+
+    public void broadcastAppointmetId(String room, Appointment appointment) {
+        server.getRoomOperations(room).sendEvent("send_appointment_message", appointment);
+
     }
 }
